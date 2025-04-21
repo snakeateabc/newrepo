@@ -2,7 +2,9 @@
 
 A space-themed debris collection game built with Flutter and Flame.
 
-![Game Screenshot](screenshots/gameplay.png)
+## Play Online
+
+The game is live on Netlify: [https://timely-dolphin-d25a8f.netlify.app/](https://timely-dolphin-d25a8f.netlify.app/)
 
 ## Game Description
 
@@ -15,31 +17,34 @@ Navigate your spacecraft through various orbital zones to clean up space debris.
 - **Avoid** red obstacles and hazards - collisions are fatal!
 - **Complete** the target score before the timer runs out to advance to the next level
 
-## Deployment to Vercel
+## Deployment to Netlify
 
-This game can be easily deployed to Vercel for web hosting with the following steps:
+This game is deployed to Netlify for web hosting with the following configuration:
 
 1. Push your code to a GitHub repository
-2. Log in to [Vercel](https://vercel.com)
-3. Click "New Project" and select your GitHub repository
-4. Keep the default build settings (the vercel.json file handles configuration)
-5. Click "Deploy"
+2. Log in to [Netlify](https://netlify.com)
+3. Click "Add new site" and select "Import an existing project"
+4. Connect your GitHub repository
+5. Configure build settings:
+   - Build command: `flutter build web --release`
+   - Publish directory: `build/web`
+6. Click "Deploy site"
 
-Vercel will automatically build and deploy your Flutter web app.
+Netlify will automatically build and deploy your Flutter web app.
 
 ### Manual Deployment
 
 If you prefer to deploy manually:
 
 ```bash
-# Install Vercel CLI
-npm install -g vercel
-
 # Build the Flutter web app
 flutter build web --release
 
-# Deploy to Vercel
-vercel
+# Install Netlify CLI
+npm install -g netlify-cli
+
+# Deploy to Netlify
+netlify deploy --prod
 ```
 
 ## Development
