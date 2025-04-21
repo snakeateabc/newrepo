@@ -1,9 +1,22 @@
 #!/bin/bash
 set -e
 
-# Download Flutter
-git clone https://github.com/flutter/flutter.git --branch stable
+# Check if Flutter is already installed
+if [ ! -d "flutter" ]; then
+    echo "Downloading Flutter..."
+    git clone https://github.com/flutter/flutter.git --branch stable
+else
+    echo "Flutter directory already exists. Using existing installation."
+    cd flutter
+    git pull origin stable
+    cd ..
+fi
+
+# Add Flutter to PATH
 export PATH="$PATH:`pwd`/flutter/bin"
+
+# Verify Flutter installation
+flutter --version
 
 # Install Flutter dependencies
 flutter precache --web
