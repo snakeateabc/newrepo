@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../utils/constants.dart';
 import '../utils/sound_manager.dart';
 import '../components/parallax_stars.dart';
+import 'dart:async';
 
 class LoadingScreen extends StatefulWidget {
   @override
@@ -10,12 +11,25 @@ class LoadingScreen extends StatefulWidget {
 
 class _LoadingScreenState extends State<LoadingScreen> {
   bool _isLoading = true;
-  String _loadingText = 'Loading...';
+  String _loadingText = 'Preparing for mission...';
+  late Timer _timeoutTimer;
   
   @override
   void initState() {
     super.initState();
+    // Set a timeout to prevent getting stuck on loading screen
+    _timeoutTimer = Timer(Duration(seconds: 8), () {
+      if (mounted) {
+        _proceedToNextScreen();
+      }
+    });
     _initializeGame();
+  }
+  
+  @override
+  void dispose() {
+    _timeoutTimer.cancel();
+    super.dispose();
   }
   
   Future<void> _initializeGame() async {
@@ -31,12 +45,17 @@ class _LoadingScreenState extends State<LoadingScreen> {
       await SoundManager.playMusic('background_music');
       
       // Navigate to start screen
-      Navigator.pushReplacementNamed(context, '/');
+      _proceedToNextScreen();
     } catch (e) {
-      setState(() {
-        _loadingText = 'Error loading game assets';
-        _isLoading = false;
-      });
+      debugPrint('Error during initialization: $e');
+      // Still proceed to next screen even if there's an error
+      _proceedToNextScreen();
+    }
+  }
+  
+  void _proceedToNextScreen() {
+    if (mounted) {
+      Navigator.pushReplacementNamed(context, '/');
     }
   }
   
