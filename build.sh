@@ -27,5 +27,8 @@ flutter config --enable-web
 # Get project dependencies
 flutter pub get
 
-# Build web app
-flutter build web --release 
+# Clean build directory
+flutter clean
+
+# Build web app with base-href
+flutter build web --release --base-href / 
