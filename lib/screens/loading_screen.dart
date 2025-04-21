@@ -18,7 +18,7 @@ class _LoadingScreenState extends State<LoadingScreen> {
   void initState() {
     super.initState();
     // Set a timeout to prevent getting stuck on loading screen
-    _timeoutTimer = Timer(Duration(seconds: 8), () {
+    _timeoutTimer = Timer(Duration(seconds: 5), () {
       if (mounted) {
         _proceedToNextScreen();
       }
@@ -34,14 +34,13 @@ class _LoadingScreenState extends State<LoadingScreen> {
   
   Future<void> _initializeGame() async {
     try {
-      // Initialize sound manager
-      setState(() => _loadingText = 'Initializing audio...');
+      // Initialize sound manager silently without showing messages
       await SoundManager.initialize();
       
-      // Add artificial delay for smoother experience
-      await Future.delayed(Duration(seconds: 1));
+      // Brief delay for a smoother experience
+      await Future.delayed(Duration(milliseconds: 500));
       
-      // Start background music
+      // Start background music without showing messages
       await SoundManager.playMusic('background_music');
       
       // Navigate to start screen
@@ -100,22 +99,7 @@ class _LoadingScreenState extends State<LoadingScreen> {
                   CircularProgressIndicator(
                     valueColor: AlwaysStoppedAnimation<Color>(kAccentColor),
                   ),
-                  SizedBox(height: 24),
-                  Text(
-                    _loadingText,
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: kSecondaryTextColor,
-                    ),
-                  ),
-                ] else
-                  Text(
-                    _loadingText,
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.red,
-                    ),
-                  ),
+                ],
               ],
             ),
           ),
