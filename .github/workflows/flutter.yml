@@ -34,4 +34,6 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: web-build
-          path: build/web 
+          path: build/web
+          
+# Note: This project is deployed via Netlify at https://timely-dolphin-d25a8f.netlify.app/ 

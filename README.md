@@ -2,9 +2,9 @@
 
 A space-themed debris collection game built with Flutter and Flame.
 
-## Play Online
+## Play Now
 
-The game is live on Netlify: [https://timely-dolphin-d25a8f.netlify.app/](https://timely-dolphin-d25a8f.netlify.app/)
+**[Play Orbital Cleanup Online](https://timely-dolphin-d25a8f.netlify.app/)**
 
 ## Game Description
 
@@ -17,35 +17,11 @@ Navigate your spacecraft through various orbital zones to clean up space debris.
 - **Avoid** red obstacles and hazards - collisions are fatal!
 - **Complete** the target score before the timer runs out to advance to the next level
 
-## Deployment to Netlify
+## Controls
 
-This game is deployed to Netlify for web hosting with the following configuration:
-
-1. Push your code to a GitHub repository
-2. Log in to [Netlify](https://netlify.com)
-3. Click "Add new site" and select "Import an existing project"
-4. Connect your GitHub repository
-5. Configure build settings:
-   - Build command: `flutter build web --release`
-   - Publish directory: `build/web`
-6. Click "Deploy site"
-
-Netlify will automatically build and deploy your Flutter web app.
-
-### Manual Deployment
-
-If you prefer to deploy manually:
-
-```bash
-# Build the Flutter web app
-flutter build web --release
-
-# Install Netlify CLI
-npm install -g netlify-cli
-
-# Deploy to Netlify
-netlify deploy --prod
-```
+- **Mobile**: Tap anywhere on the screen to move your spacecraft
+- **Desktop**: Click with mouse to move your spacecraft
+- **Game Menu**: Use the pause button in the top-right corner to access game options
 
 ## Development
 
@@ -74,9 +50,11 @@ The game adapts to different screen sizes:
 - **Mobile**: Vertical orientation with controls optimized for touch
 - **Desktop**: Horizontal orientation with larger play area and more elements
 
-## Customization
+## Credits
 
-You can customize game difficulty by modifying the constants in `lib/utils/constants.dart`.
+- **Music**: Space-themed background music to enhance the gameplay experience
+- **Graphics**: Custom space assets and debris designs
+- **Framework**: Built with Flutter and the Flame game engine
 
 ## License
 
