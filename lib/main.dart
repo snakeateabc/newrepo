@@ -1,53 +1,48 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'screens/loading_screen.dart';
+import 'screens/start_screen.dart';
+import 'screens/level_select_screen.dart';
+import 'screens/game_screen.dart';
+import 'screens/result_screen.dart';
+import 'utils/game_preferences.dart';
 
-void main() {
-  runApp(const MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  
+  // Force portrait orientation
+  await SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]);
+  
+  // Initialize preferences
+  final prefs = await SharedPreferences.getInstance();
+  GamePreferences.initialize(prefs);
+  
+  runApp(OrbitalCleanupApp());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
+class OrbitalCleanupApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Orbital Cleanup',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
-        useMaterial3: true,
+        primarySwatch: Colors.blue,
+        visualDensity: VisualDensity.adaptivePlatformDensity,
+        fontFamily: 'Exo2',
       ),
-      home: const MyHomePage(),
-    );
-  }
-}
-
-class MyHomePage extends StatelessWidget {
-  const MyHomePage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: const Text('Orbital Cleanup'),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Text(
-              'Welcome to Orbital Cleanup',
-              style: TextStyle(fontSize: 24),
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                // TODO: Start game
-              },
-              child: const Text('Start Game'),
-            ),
-          ],
-        ),
-      ),
+      initialRoute: '/loading',
+      routes: {
+        '/loading': (context) => LoadingScreen(),
+        '/': (context) => StartScreen(),
+        '/level_select': (context) => LevelSelectScreen(),
+        '/game': (context) => GameScreen(),
+        '/result': (context) => ResultScreen(),
+      },
     );
   }
 } 
