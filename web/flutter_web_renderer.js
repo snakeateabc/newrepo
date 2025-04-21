@@ -1,7 +1,7 @@
 // This script determines the optimal renderer for Flutter web
 (function() {
   // Detect if device is mobile
-  const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+  var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
   
   // Detect if browser supports WebGL
   function hasWebGL() {

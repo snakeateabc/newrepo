@@ -13,8 +13,7 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
   <meta name="apple-mobile-web-app-title" content="Orbital Cleanup">
-  <link rel="apple-touch-icon" href="icons/Icon-192.png">
-
+  
   <!-- Favicon -->
   <link rel="icon" type="image/png" href="favicon.png"/>
 
@@ -23,15 +22,18 @@
 
   <title>Orbital Cleanup</title>
   <link rel="manifest" href="manifest.json">
-
-  <!-- Determine optimal renderer -->
+  
+  <!-- This script determines the Flutter web renderer to use -->
   <script src="flutter_web_renderer.js"></script>
+  
   <script>
     // The value below is injected by flutter build, do not touch.
-    const serviceWorkerVersion = "{{flutter_service_worker_version}}";
+    var serviceWorkerVersion = null;
   </script>
+  
   <!-- This script adds the flutter initialization JS code -->
   <script src="flutter.js" defer></script>
+  
   <style>
     body {
       background-color: #0F172A;
@@ -112,8 +114,11 @@
     }, { once: true });
 
     window.addEventListener('load', function() {
-      // Set build configuration
-      _flutter.loader.load({
+      // The serviceWorker registration is handled by Flutter
+      var serviceWorkerUrl = 'flutter_service_worker.js?v=' + (serviceWorkerVersion || '');
+      
+      // Initialize Flutter
+      _flutter.loader.loadEntrypoint({
         serviceWorker: {
           serviceWorkerVersion: serviceWorkerVersion,
         },
@@ -126,7 +131,10 @@
           // Run the app
           await appRunner.runApp();
           // Remove loading indicator
-          document.querySelector('#loading').remove();
+          var loadingElement = document.querySelector('#loading');
+          if (loadingElement) {
+            loadingElement.remove();
+          }
         }
       });
     });
