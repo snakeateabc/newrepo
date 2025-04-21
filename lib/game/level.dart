@@ -4,15 +4,17 @@ import '../models/space_debris.dart';
 import 'orbital_cleanup_game.dart';
 
 abstract class Level extends Component with HasGameRef<OrbitalCleanupGame> {
-  final Random _random = Random();
-  final int levelId;
-  int targetScore = 0;
+  final Random random = Random();
+  final int targetScore;
   int currentScore = 0;
   int debrisCollected = 0;
   int timeRemaining = 0;
   bool isCompleted = false;
+  final List<SpaceDebris> _debris = [];
   
-  Level(this.levelId);
+  Level({required this.targetScore});
+  
+  List<SpaceDebris> get debris => _debris;
   
   @override
   void onMount() {
@@ -37,36 +39,34 @@ abstract class Level extends Component with HasGameRef<OrbitalCleanupGame> {
     size ??= _getRandomDebrisSize();
     
     // Create random position at top of screen
-    final x = _random.nextDouble() * screenWidth;
+    final x = random.nextDouble() * screenWidth;
     final y = -50.0; // Start above screen
     
     // Create and return the debris
-    return SpaceDebris(
+    final debris = SpaceDebris(
       position: Vector2(x, y),
       debrisSize: size,
       debrisType: type,
       isHazard: isHazard,
-      rotationSpeed: _random.nextDouble() * 2.0,
+      rotationSpeed: random.nextDouble() * 2.0,
     );
+    
+    addDebris(debris);
+    return debris;
   }
   
   // Handle debris collection
   void collectDebris(SpaceDebris debris) {
-    if (!debris.isHazard) {
+    if (!debris.isCollected) {
+      debris.collect();
       currentScore += debris.pointValue;
-      debrisCollected++;
-      checkLevelCompletion();
-    } else {
-      // Handle hazard collision
-      gameRef.handleHazardCollision();
-    }
-  }
-  
-  // Check if level is completed
-  void checkLevelCompletion() {
-    if (currentScore >= targetScore) {
-      isCompleted = true;
-      gameRef.completeLevel();
+      _debris.remove(debris);
+      
+      // Check if level is completed
+      if (currentScore >= targetScore) {
+        isCompleted = true;
+        gameRef.endGame(true);
+      }
     }
   }
   
@@ -74,12 +74,16 @@ abstract class Level extends Component with HasGameRef<OrbitalCleanupGame> {
   void updateTimer(int secondsLeft) {
     timeRemaining = secondsLeft;
     if (timeRemaining <= 0 && !isCompleted) {
-      gameRef.timeUp();
+      gameRef.endGame(false);
     }
   }
   
+  void addDebris(SpaceDebris debris) {
+    _debris.add(debris);
+  }
+  
   DebrisSize _getRandomDebrisSize() {
-    final roll = _random.nextDouble();
+    final roll = random.nextDouble();
     if (roll < 0.5) {
       return DebrisSize.small;
     } else if (roll < 0.8) {

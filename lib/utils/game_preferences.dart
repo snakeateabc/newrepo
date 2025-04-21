@@ -1,60 +1,55 @@
 import 'package:shared_preferences/shared_preferences.dart';
+import '../utils/constants.dart';
 
 class GamePreferences {
   static late SharedPreferences _prefs;
-  static const String _completedLevelsKey = 'completed_levels';
-  static const String _highScoresKey = 'high_scores';
-
-  // Initialize the preferences instance
-  static void initialize(SharedPreferences prefs) {
+  
+  static Future<void> initialize(SharedPreferences prefs) async {
     _prefs = prefs;
   }
-
-  // Get completed levels
-  static Set<int> getCompletedLevels() {
-    final List<String> completed = _prefs.getStringList(_completedLevelsKey) ?? [];
-    return completed.map((level) => int.parse(level)).toSet();
+  
+  static bool isLevelCompleted(int levelId) {
+    return _prefs.getBool('level_$levelId\_completed') ?? false;
   }
-
-  // Save a completed level
-  static Future<bool> completeLevel(int levelId) async {
-    final completedLevels = getCompletedLevels();
-    completedLevels.add(levelId);
-    
-    return await _prefs.setStringList(
-      _completedLevelsKey,
-      completedLevels.map((level) => level.toString()).toList(),
-    );
+  
+  static Future<void> completeLevel(int levelId) async {
+    await _prefs.setBool('level_$levelId\_completed', true);
   }
-
-  // Save high score for a level
-  static Future<bool> saveHighScore(int levelId, int score) async {
-    final key = "${_highScoresKey}_$levelId";
-    final currentHighScore = _prefs.getInt(key) ?? 0;
-    
-    if (score > currentHighScore) {
-      return await _prefs.setInt(key, score);
-    }
-    return false;
-  }
-
-  // Get high score for a level
+  
   static int getHighScore(int levelId) {
-    final key = "${_highScoresKey}_$levelId";
-    return _prefs.getInt(key) ?? 0;
+    return _prefs.getInt('level_$levelId\_highscore') ?? 0;
   }
-
-  // Reset all game progress (for testing)
-  static Future<void> resetProgress() async {
-    await _prefs.remove(_completedLevelsKey);
-    
-    // Get all keys that start with high_scores
-    final keys = _prefs.getKeys();
-    final highScoreKeys = keys.where((key) => key.startsWith(_highScoresKey));
-    
-    // Remove all high score keys
-    for (final key in highScoreKeys) {
-      await _prefs.remove(key);
+  
+  static Future<void> saveHighScore(int levelId, int score) async {
+    final currentHighScore = getHighScore(levelId);
+    if (score > currentHighScore) {
+      await _prefs.setInt('level_$levelId\_highscore', score);
     }
+  }
+  
+  static bool isSoundEnabled() {
+    return _prefs.getBool('sound_enabled') ?? true;
+  }
+  
+  static Future<void> setSoundEnabled(bool enabled) async {
+    await _prefs.setBool('sound_enabled', enabled);
+  }
+  
+  static bool isMusicEnabled() {
+    return _prefs.getBool('music_enabled') ?? true;
+  }
+  
+  static Future<void> setMusicEnabled(bool enabled) async {
+    await _prefs.setBool('music_enabled', enabled);
+  }
+  
+  static List<int> getCompletedLevels() {
+    final completedLevels = <int>[];
+    for (int i = 1; i <= kTotalLevels; i++) {
+      if (isLevelCompleted(i)) {
+        completedLevels.add(i);
+      }
+    }
+    return completedLevels;
   }
 } 

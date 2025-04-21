@@ -1,90 +1,61 @@
 import 'package:flame/components.dart';
-import 'package:flame/events.dart';
-import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 
-class Player extends PositionComponent with HasGameRef, TapCallbacks {
-  // Player properties
-  double speed = 300;
-  final double size;
-  
-  // Internal state
+class Player extends PositionComponent {
   Vector2 targetPosition = Vector2.zero();
   bool isMoving = false;
-  
-  // Visuals
+  double moveSpeed = 300.0;
+
   final Paint _bodyPaint = Paint()..color = Colors.blue.shade600;
   final Paint _engineGlowPaint = Paint()..color = Colors.orange.shade500;
-  
-  Player({
-    required Vector2 position,
-    this.size = 32.0,
-  }) : super(
-         position: position,
-         size: Vector2(size, size),
-         anchor: Anchor.center,
-       );
-  
-  @override
-  void onMount() {
-    super.onMount();
-    targetPosition = position.clone();
+
+  Player({required Vector2 initialPosition, required Vector2 initialSize}) : super(position: initialPosition, size: initialSize);
+
+  void moveTo(Vector2 newPosition) {
+    targetPosition = newPosition;
+    isMoving = true;
   }
-  
+
   @override
   void update(double dt) {
     super.update(dt);
-    
-    // Move towards target position
-    if (position.distanceTo(targetPosition) > 5) {
-      isMoving = true;
+    if (isMoving) {
+      final Vector2 direction = targetPosition - position;
+      final double distance = direction.length;
       
-      final direction = targetPosition - position;
-      direction.normalize();
-      
-      position.add(direction * speed * dt);
-    } else {
-      isMoving = false;
+      if (distance > 1.0) {
+        direction.normalize();
+        position += direction * moveSpeed * dt;
+      } else {
+        position = targetPosition;
+        isMoving = false;
+      }
     }
-    
-    // Keep player within screen bounds
-    position.x = position.x.clamp(size / 2, gameRef.size.x - size / 2);
-    position.y = position.y.clamp(size / 2, gameRef.size.y - size / 2);
   }
-  
+
   @override
   void render(Canvas canvas) {
-    super.render(canvas);
-    
-    // Engine glow
-    if (isMoving) {
-      final engineOffset = size * 0.15;
-      canvas.drawCircle(
-        Offset(0, size * 0.4),
-        size * 0.3,
-        _engineGlowPaint,
-      );
-    }
-    
-    // Ship body
+    // Draw engine glow
     final path = Path()
-      ..moveTo(0, -size * 0.4)  // Top center
-      ..lineTo(size * 0.4, size * 0.4)  // Bottom right
-      ..lineTo(0, size * 0.2)  // Middle center
-      ..lineTo(-size * 0.4, size * 0.4)  // Bottom left
+      ..moveTo(size.x / 2, size.y)
+      ..lineTo(size.x / 4, size.y * 0.8)
+      ..lineTo(size.x * 3 / 4, size.y * 0.8)
       ..close();
-    
-    canvas.drawPath(path, _bodyPaint);
-    
-    // Cockpit
+    canvas.drawPath(path, _engineGlowPaint);
+
+    // Draw ship body
+    final shipPath = Path()
+      ..moveTo(size.x / 2, 0)
+      ..lineTo(0, size.y * 0.8)
+      ..lineTo(size.x, size.y * 0.8)
+      ..close();
+    canvas.drawPath(shipPath, _bodyPaint);
+
+    // Draw cockpit
     canvas.drawCircle(
-      Offset(0, -size * 0.1),
-      size * 0.15,
+      Offset(size.x / 2, size.y * 0.4),
+      size.x * 0.15,
       Paint()..color = Colors.lightBlue.shade100,
     );
-  }
-  
-  void moveTo(Vector2 target) {
-    targetPosition = target.clone();
   }
 } 

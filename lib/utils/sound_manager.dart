@@ -1,84 +1,71 @@
-import 'package:audioplayers/audioplayers.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter/foundation.dart';
 
 class SoundManager {
-  static late AudioPlayer _effectsPlayer;
-  static late AudioPlayer _musicPlayer;
-  static bool _isSoundEnabled = true;
-  static bool _isMusicEnabled = true;
-  static const String _soundKey = 'sound_enabled';
-  static const String _musicKey = 'music_enabled';
-  
+  static final SoundManager _instance = SoundManager._internal();
+  factory SoundManager() => _instance;
+  SoundManager._internal();
+
+  bool _isMusicEnabled = false; // Default to disabled
+  static const String _musicEnabledKey = 'music_enabled';
+
+  // Music credit information
+  static const String musicTitle = "Dreamcatcher";
+  static const String musicArtist = "Onycs";
+  static const String musicLicense = "Licensed under Creative Commons";
+
+  // Static wrapper for initialization - now a no-op
   static Future<void> initialize() async {
-    _effectsPlayer = AudioPlayer();
-    _musicPlayer = AudioPlayer();
-    
-    // Load preferences
-    final prefs = await SharedPreferences.getInstance();
-    _isSoundEnabled = prefs.getBool(_soundKey) ?? true;
-    _isMusicEnabled = prefs.getBool(_musicKey) ?? true;
-    
-    // Set up music player
-    await _musicPlayer.setReleaseMode(ReleaseMode.loop);
-    await _musicPlayer.setVolume(0.5);
+    // Do nothing, audio is disabled
+    debugPrint('Audio system disabled');
   }
-  
-  static Future<void> playSound(String soundName) async {
-    if (!_isSoundEnabled) return;
-    
-    try {
-      await _effectsPlayer.play(AssetSource('audio/$soundName.mp3'));
-    } catch (e) {
-      print('Error playing sound: $e');
-    }
-  }
-  
+
+  // Static wrapper for playing music - now a no-op
   static Future<void> playMusic(String musicName) async {
-    if (!_isMusicEnabled) return;
-    
-    try {
-      await _musicPlayer.play(AssetSource('audio/$musicName.mp3'));
-    } catch (e) {
-      print('Error playing music: $e');
-    }
+    // Do nothing, audio is disabled
+    debugPrint('Audio playback disabled');
   }
-  
-  static Future<void> stopMusic() async {
-    await _musicPlayer.stop();
+
+  // Initialize the sound manager - now a no-op
+  Future<void> _initializeInternal() async {
+    // Do nothing, audio is disabled
   }
-  
-  static Future<void> pauseMusic() async {
-    await _musicPlayer.pause();
+
+  // Play background music - now a no-op
+  Future<void> playBackgroundMusic() async {
+    // Do nothing, audio is disabled
   }
-  
-  static Future<void> resumeMusic() async {
-    if (!_isMusicEnabled) return;
-    await _musicPlayer.resume();
+
+  // Stop background music - now a no-op
+  Future<void> stopBackgroundMusic() async {
+    // Do nothing, audio is disabled
   }
-  
-  static Future<void> toggleSound() async {
-    _isSoundEnabled = !_isSoundEnabled;
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool(_soundKey, _isSoundEnabled);
+
+  // Pause background music - now a no-op
+  Future<void> pauseBackgroundMusic() async {
+    // Do nothing, audio is disabled
   }
-  
-  static Future<void> toggleMusic() async {
+
+  // Resume background music - now a no-op
+  Future<void> resumeBackgroundMusic() async {
+    // Do nothing, audio is disabled
+  }
+
+  // Toggle music on/off - now just updates state
+  Future<void> toggleMusic() async {
     _isMusicEnabled = !_isMusicEnabled;
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool(_musicKey, _isMusicEnabled);
-    
-    if (_isMusicEnabled) {
-      await _musicPlayer.resume();
-    } else {
-      await _musicPlayer.pause();
-    }
+    debugPrint('Music toggled: $_isMusicEnabled (no actual effect)');
   }
-  
-  static bool get isSoundEnabled => _isSoundEnabled;
-  static bool get isMusicEnabled => _isMusicEnabled;
-  
-  static Future<void> dispose() async {
-    await _effectsPlayer.dispose();
-    await _musicPlayer.dispose();
+
+  // Get music enabled status
+  bool get isMusicEnabled => _isMusicEnabled;
+
+  // Dispose resources - now a no-op
+  Future<void> dispose() async {
+    // Nothing to dispose
+  }
+
+  // Get music credit information
+  static String getMusicCredit() {
+    return 'Background music: "$musicTitle" by $musicArtist\n$musicLicense\n(Audio currently disabled)';
   }
 } 

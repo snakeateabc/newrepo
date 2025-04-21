@@ -3,6 +3,7 @@ import '../utils/constants.dart';
 import '../utils/responsive_layout.dart';
 import '../components/cosmic_button.dart';
 import '../components/parallax_stars.dart';
+import '../utils/game_preferences.dart';
 
 class ResultScreen extends StatelessWidget {
   @override
@@ -95,6 +96,16 @@ class ResultScreen extends StatelessWidget {
     final textSize = isTablet ? 18.0 : 16.0;
     final levelName = kLevelNames[levelId] ?? 'Level $levelId';
     
+    // Calculate final score with bonuses
+    final timeBonus = isLevelCompleted ? timeRemaining * kBonusPointsPerSecond : 0;
+    final completionBonus = isLevelCompleted ? kLevelCompletionBonus : 0;
+    final finalScore = score + timeBonus + completionBonus;
+    
+    // Determine if next level is available
+    final bool hasNextLevel = levelId < kTotalLevels;
+    final int nextLevelId = levelId + 1;
+    final bool nextLevelUnlocked = isLevelCompleted || GamePreferences.isLevelCompleted(levelId);
+    
     return Center(
       child: Padding(
         padding: EdgeInsets.symmetric(
@@ -161,13 +172,13 @@ class ResultScreen extends StatelessWidget {
                     SizedBox(height: 16.0),
                     _buildStatRow(
                       'Time Bonus',
-                      '+${timeRemaining * kBonusPointsPerSecond}',
+                      '+$timeBonus',
                       isTablet: isTablet,
                     ),
                     SizedBox(height: 16.0),
                     _buildStatRow(
                       'Completion Bonus',
-                      '+$kLevelCompletionBonus',
+                      '+$completionBonus',
                       isTablet: isTablet,
                     ),
                     SizedBox(height: 24.0),
@@ -175,7 +186,7 @@ class ResultScreen extends StatelessWidget {
                     SizedBox(height: 24.0),
                     _buildStatRow(
                       'Final Score',
-                      '${score + (timeRemaining * kBonusPointsPerSecond) + kLevelCompletionBonus}',
+                      '$finalScore',
                       isTablet: isTablet,
                       highlight: true,
                       large: true,
@@ -207,16 +218,28 @@ class ResultScreen extends StatelessWidget {
                 
                 SizedBox(width: 16.0),
                 
-                // Continue button
+                // Continue button (or next level button)
                 Expanded(
                   child: CosmicButton(
-                    label: 'CONTINUE',
+                    label: isLevelCompleted && hasNextLevel && nextLevelUnlocked
+                        ? 'NEXT LEVEL'
+                        : 'CONTINUE',
                     onPressed: () {
-                      Navigator.pushNamedAndRemoveUntil(
-                        context,
-                        '/level_select',
-                        (route) => route.isFirst,
-                      );
+                      if (isLevelCompleted && hasNextLevel && nextLevelUnlocked) {
+                        // Go to next level
+                        Navigator.pushReplacementNamed(
+                          context,
+                          '/game',
+                          arguments: nextLevelId,
+                        );
+                      } else {
+                        // Go to level select screen
+                        Navigator.pushNamedAndRemoveUntil(
+                          context,
+                          '/level_select',
+                          (route) => route.isFirst,
+                        );
+                      }
                     },
                   ),
                 ),

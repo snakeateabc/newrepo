@@ -4,6 +4,7 @@ import '../utils/game_preferences.dart';
 import '../utils/responsive_layout.dart';
 import '../components/cosmic_button.dart';
 import '../components/parallax_stars.dart';
+import '../components/game_instructions.dart';
 
 class LevelSelectScreen extends StatelessWidget {
   @override
@@ -31,6 +32,16 @@ class LevelSelectScreen extends StatelessWidget {
     return Column(
       children: [
         _buildHeader(context, isTablet: false),
+        
+        // Instructions panel
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          child: GameInstructions(isTablet: false),
+        ),
+        
+        const SizedBox(height: 16),
+        
+        // Level grid
         Expanded(
           child: MaxWidthContainer(
             child: _buildLevelGrid(context, isTablet: false),
@@ -41,11 +52,29 @@ class LevelSelectScreen extends StatelessWidget {
   }
 
   Widget _buildTabletLayout(BuildContext context) {
-    return Column(
+    return Row(
       children: [
-        _buildHeader(context, isTablet: true),
+        // Left side with header and instructions
         Expanded(
-          child: MaxWidthContainer(
+          flex: 3,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              _buildHeader(context, isTablet: true),
+              Padding(
+                padding: const EdgeInsets.all(24.0),
+                child: GameInstructions(isTablet: true),
+              ),
+              Spacer(),
+            ],
+          ),
+        ),
+        
+        // Right side with level grid
+        Expanded(
+          flex: 5,
+          child: Padding(
+            padding: const EdgeInsets.only(right: 24.0),
             child: _buildLevelGrid(context, isTablet: true),
           ),
         ),
@@ -57,7 +86,7 @@ class LevelSelectScreen extends StatelessWidget {
     return Container(
       padding: EdgeInsets.symmetric(
         horizontal: isTablet ? 24.0 : 16.0,
-        vertical: isTablet ? 32.0 : 16.0,
+        vertical: isTablet ? 24.0 : 16.0,
       ),
       child: Row(
         children: [
@@ -91,13 +120,13 @@ class LevelSelectScreen extends StatelessWidget {
     
     return Padding(
       padding: EdgeInsets.symmetric(
-        horizontal: isTablet ? 32.0 : 16.0,
+        horizontal: isTablet ? 16.0 : 16.0,
         vertical: 16.0,
       ),
       child: GridView.builder(
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: isTablet ? 2 : 1,
-          childAspectRatio: isTablet ? 1.5 : 1.3,
+          childAspectRatio: isTablet ? 1.5 : 1.5,
           crossAxisSpacing: 24.0,
           mainAxisSpacing: 24.0,
         ),
@@ -147,80 +176,83 @@ class LevelSelectScreen extends StatelessWidget {
         child: Stack(
           children: [
             // Content
-            Padding(
-              padding: EdgeInsets.all(isTablet ? 24.0 : 16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Level name
-                  Text(
-                    levelName,
-                    style: TextStyle(
-                      fontSize: isTablet ? 24.0 : 20.0,
-                      fontWeight: FontWeight.bold,
-                      color: kTextColor,
+            Positioned.fill(
+              child: Padding(
+                padding: EdgeInsets.all(isTablet ? 24.0 : 16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Level name
+                    Text(
+                      levelName,
+                      style: TextStyle(
+                        fontSize: isTablet ? 24.0 : 20.0,
+                        fontWeight: FontWeight.bold,
+                        color: kTextColor,
+                      ),
                     ),
-                  ),
-                  
-                  SizedBox(height: 8.0),
-                  
-                  // Level description
-                  Text(
-                    levelDescription,
-                    style: TextStyle(
-                      fontSize: isTablet ? 16.0 : 14.0,
-                      color: kSecondaryTextColor,
+                    
+                    SizedBox(height: 8.0),
+                    
+                    // Level description
+                    Text(
+                      levelDescription,
+                      style: TextStyle(
+                        fontSize: isTablet ? 16.0 : 14.0,
+                        color: kSecondaryTextColor,
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
                     ),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  
-                  Spacer(),
-                  
-                  // High score
-                  if (isCompleted) ...[
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.star,
-                          color: kAccentColor,
-                          size: isTablet ? 24.0 : 20.0,
-                        ),
-                        SizedBox(width: 8.0),
-                        Text(
-                          'High Score: $highScore',
-                          style: TextStyle(
-                            fontSize: isTablet ? 16.0 : 14.0,
+                    
+                    Spacer(),
+                    
+                    // High score
+                    if (isCompleted) ...[
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.star,
                             color: kAccentColor,
-                            fontWeight: FontWeight.bold,
+                            size: isTablet ? 24.0 : 20.0,
                           ),
-                        ),
-                      ],
+                          SizedBox(width: 8.0),
+                          Text(
+                            'High Score: $highScore',
+                            style: TextStyle(
+                              fontSize: isTablet ? 16.0 : 14.0,
+                              color: kAccentColor,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 12.0),
+                    ],
+                    
+                    // Play button
+                    CosmicButton(
+                      label: isCompleted
+                          ? 'PLAY AGAIN'
+                          : isUnlocked
+                              ? 'START'
+                              : 'LOCKED',
+                      onPressed: () {
+                        if (isUnlocked) {
+                          Navigator.pushNamed(
+                            context,
+                            '/game',
+                            arguments: levelId,
+                          );
+                        }
+                      },
+                      fontSize: isTablet ? 16.0 : 14.0,
+                      isEnabled: isUnlocked,
+                      isPrimary: !isCompleted,
+                      height: 48.0,
                     ),
-                    SizedBox(height: 16.0),
                   ],
-                  
-                  // Play button
-                  CosmicButton(
-                    label: isCompleted
-                        ? 'PLAY AGAIN'
-                        : isUnlocked
-                            ? 'START'
-                            : 'LOCKED',
-                    onPressed: () {
-                      if (isUnlocked) {
-                        Navigator.pushNamed(
-                          context,
-                          '/game',
-                          arguments: levelId,
-                        );
-                      }
-                    },
-                    fontSize: isTablet ? 16.0 : 14.0,
-                    isEnabled: isUnlocked,
-                    isPrimary: !isCompleted,
-                  ),
-                ],
+                ),
               ),
             ),
             

@@ -5,10 +5,12 @@
 
   <meta charset="UTF-8">
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
-  <meta name="description" content="Orbital Cleanup - A space-themed game where you clean up orbital debris.">
+  <meta name="description" content="A space debris cleanup game">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
   <!-- iOS meta tags & icons -->
   <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
   <meta name="apple-mobile-web-app-title" content="Orbital Cleanup">
   <link rel="apple-touch-icon" href="icons/Icon-192.png">
@@ -16,28 +18,115 @@
   <!-- Favicon -->
   <link rel="icon" type="image/png" href="favicon.png"/>
 
+  <!-- Enable audio playback -->
+  <meta name="audioplayers-web-enable" content="true">
+
   <title>Orbital Cleanup</title>
   <link rel="manifest" href="manifest.json">
 
+  <!-- Determine optimal renderer -->
+  <script src="flutter_web_renderer.js"></script>
   <script>
     // The value below is injected by flutter build, do not touch.
-    const serviceWorkerVersion = null;
+    const serviceWorkerVersion = "{{flutter_service_worker_version}}";
   </script>
   <!-- This script adds the flutter initialization JS code -->
   <script src="flutter.js" defer></script>
+  <style>
+    body {
+      background-color: #0F172A;
+      margin: 0;
+      overflow: hidden;
+    }
+    
+    .loading {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      margin: 0;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      -ms-transform: translate(-50%, -50%);
+      transform: translate(-50%, -50%);
+      text-align: center;
+    }
+    
+    .loading-text {
+      font-family: sans-serif;
+      color: #B0B9D0;
+      margin-top: 24px;
+      font-size: 16px;
+    }
+
+    .flutter-loader {
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: #0F172A;
+    }
+
+    .loading-indicator {
+      width: 60px;
+      height: 60px;
+      border: 8px solid #4287f5;
+      border-radius: 50%;
+      border-top-color: #FF9E1B;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+    
+    .game-title {
+      font-family: sans-serif;
+      color: #FFFFFF;
+      font-size: 28px;
+      font-weight: bold;
+      margin-bottom: 8px;
+      letter-spacing: 2px;
+    }
+  </style>
 </head>
 <body>
+  <div id="loading" class="loading">
+    <div class="game-title">ORBITAL CLEANUP</div>
+    <div class="loading-indicator"></div>
+    <div class="loading-text">Preparing for mission...</div>
+  </div>
   <script>
-    window.addEventListener('load', function(ev) {
-      // Download main.dart.js
-      _flutter.loader.loadEntrypoint({
+    // Enable touch events
+    window.addEventListener('touchstart', function() {}, {passive: true});
+    
+    // Unlock audio for web
+    window.addEventListener('click', function() {
+      if (window.unlockAudioContext) {
+        window.unlockAudioContext();
+      }
+    }, { once: true });
+
+    window.addEventListener('load', function() {
+      // Set build configuration
+      _flutter.loader.load({
         serviceWorker: {
           serviceWorkerVersion: serviceWorkerVersion,
         },
-        onEntrypointLoaded: function(engineInitializer) {
-          engineInitializer.initializeEngine().then(function(appRunner) {
-            appRunner.runApp();
+        onEntrypointLoaded: async function(engineInitializer) {
+          // Initialize the Flutter engine
+          let appRunner = await engineInitializer.initializeEngine({
+            useColorEmoji: true,
+            renderer: window.flutterWebRenderer || 'auto',
           });
+          // Run the app
+          await appRunner.runApp();
+          // Remove loading indicator
+          document.querySelector('#loading').remove();
         }
       });
     });

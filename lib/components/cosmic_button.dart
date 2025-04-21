@@ -7,6 +7,7 @@ class CosmicButton extends StatefulWidget {
   final double fontSize;
   final bool isEnabled;
   final bool isPrimary;
+  final double height;
 
   const CosmicButton({
     Key? key,
@@ -15,6 +16,7 @@ class CosmicButton extends StatefulWidget {
     this.fontSize = 16.0,
     this.isEnabled = true,
     this.isPrimary = true,
+    this.height = 56.0,
   }) : super(key: key);
 
   @override
@@ -92,7 +94,7 @@ class _CosmicButtonState extends State<CosmicButton> with SingleTickerProviderSt
         },
         child: Container(
           width: double.infinity,
-          height: 56.0,
+          height: widget.height,
           decoration: BoxDecoration(
             color: activeColor,
             borderRadius: BorderRadius.circular(12.0),
@@ -107,13 +109,19 @@ class _CosmicButtonState extends State<CosmicButton> with SingleTickerProviderSt
                   ],
           ),
           child: Center(
-            child: Text(
-              widget.label,
-              style: TextStyle(
-                color: kTextColor,
-                fontSize: widget.fontSize,
-                fontWeight: FontWeight.bold,
-                letterSpacing: 1.2,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              child: Text(
+                widget.label,
+                style: TextStyle(
+                  color: kTextColor,
+                  fontSize: widget.fontSize,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 1.2,
+                ),
+                textAlign: TextAlign.center,
+                overflow: TextOverflow.ellipsis,
+                maxLines: 1,
               ),
             ),
           ),

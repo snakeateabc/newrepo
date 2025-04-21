@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 // Game Constants
 const double kMaxGameWidth = 500.0;
+const double kMaxGameHeight = 750.0;
 const double kMaxContentWidth = 800.0;
 const double kTabletBreakpoint = 600.0;
 

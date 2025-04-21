@@ -9,12 +9,10 @@ class LevelOne extends Level {
   int _spawnCount = 0;
   final int _maxSpawnCount = 30;
 
-  LevelOne() : super(1);
+  LevelOne() : super(targetScore: 300);
 
   @override
   void initializeLevel() {
-    targetScore = 300; // Target score to complete the level
-    
     // Start spawning debris
     _debrisSpawnTimer = Timer(
       2.0, // Spawn every 2 seconds
@@ -32,8 +30,6 @@ class LevelOne extends Level {
   void update(double dt) {
     super.update(dt);
     _debrisSpawnTimer.update(dt);
-    
-    // Level-specific update logic
   }
 
   void _spawnDebris() {
@@ -77,6 +73,7 @@ class LevelOne extends Level {
       isHazard: false,
     );
     
+    addDebris(debris);
     gameRef.add(debris);
   }
 } 

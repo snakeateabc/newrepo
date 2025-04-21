@@ -8,32 +8,20 @@ class LevelThree extends Level {
   late Timer _debrisSpawnTimer;
   late Timer _asteroidSpawnTimer;
   int _spawnCount = 0;
-  final int _maxSpawnCount = 60;
+  final int _maxSpawnCount = 50;
   
   // Asteroid field patterns
   final List<Vector2> _asteroidPattern = [];
   int _patternIndex = 0;
 
-  LevelThree() : super(3);
+  LevelThree() : super(targetScore: 800);
 
   @override
   void initializeLevel() {
-    targetScore = 800; // Target score to complete the level
-    
-    // Initialize asteroid pattern
-    _generateAsteroidPattern();
-    
     // Start spawning debris
     _debrisSpawnTimer = Timer(
-      1.2, // Spawn even faster for level 3
+      1.0, // Spawn every second
       onTick: _spawnDebris,
-      repeat: true,
-    );
-    
-    // Spawn asteroids on a separate timer
-    _asteroidSpawnTimer = Timer(
-      3.0, // Spawn asteroids every 3 seconds
-      onTick: _spawnAsteroid,
       repeat: true,
     );
     

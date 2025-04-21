@@ -10,15 +10,13 @@ class LevelTwo extends Level {
   int _spawnCount = 0;
   final int _maxSpawnCount = 40;
 
-  LevelTwo() : super(2);
+  LevelTwo() : super(targetScore: 500);
 
   @override
   void initializeLevel() {
-    targetScore = 500; // Target score to complete the level
-    
     // Start spawning debris
     _debrisSpawnTimer = Timer(
-      1.5, // Spawn every 1.5 seconds (faster than level 1)
+      1.5, // Spawn every 1.5 seconds
       onTick: _spawnDebris,
       repeat: true,
     );
@@ -31,7 +29,7 @@ class LevelTwo extends Level {
     );
     
     // Add some initial debris
-    for (int i = 0; i < 7; i++) {
+    for (int i = 0; i < 8; i++) {
       _spawnInitialDebris();
     }
   }
