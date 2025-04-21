@@ -1,5 +1,5 @@
 name: orbital_cleanup
-description: A space-themed game where you clean up orbital debris.
+description: A space debris cleanup game
 publish_to: 'none'
 version: 1.0.0+1
 
@@ -9,15 +9,15 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  flame: ^1.8.0
-  shared_preferences: ^2.2.0
+  flame: ^1.28.0
+  audioplayers: ^5.2.1
   google_fonts: ^5.1.0
-  audioplayers: ^5.1.0
+  shared_preferences: ^2.5.3
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^2.0.0
+  flutter_lints: ^2.0.3
 
 flutter:
   uses-material-design: true
@@ -25,16 +25,8 @@ flutter:
   assets:
     - assets/images/
     - assets/audio/
+    - assets/fonts/
     
-  fonts:
-    - family: Exo2
-      fonts:
-        - asset: assets/fonts/Exo2-Regular.ttf
-        - asset: assets/fonts/Exo2-Bold.ttf
-          weight: 700
-        - asset: assets/fonts/Exo2-Light.ttf
-          weight: 300
-          
   # Required audio files:
   # - assets/audio/background_music.mp3
   # - assets/audio/collect.mp3
